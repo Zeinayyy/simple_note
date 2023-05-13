@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,7 +14,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {}, child: Icon(Icons.note_add),),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        GoRouter.of(context).pushNamed('add-note');
+      }, child: Icon(Icons.note_add),),
       appBar: AppBar(
         title: const Text("Note Urang"),
         elevation: 0,
