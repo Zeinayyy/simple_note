@@ -13,7 +13,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.lightGreen
+        primarySwatch: Colors.lightGreen,
+        useMaterial3: true,
       ),
       routeInformationParser: AppRoutes.goRouter.routeInformationParser,
       routeInformationProvider: AppRoutes.goRouter.routeInformationProvider,
