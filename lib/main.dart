@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:simple_note/models/note.dart';
 import 'package:simple_note/utils/app_routes.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(NoteAdapter());
+  await Hive.openBox('notesBox');
   runApp(const MyApp());
 }
 
@@ -22,4 +27,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

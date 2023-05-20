@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:simple_note/extension/format_date.dart';
+import 'package:simple_note/models/note.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,28 +18,47 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        GoRouter.of(context).pushNamed('add-note');
-      }, child: Icon(Icons.note_add),),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await GoRouter.of(context).pushNamed('add-note');
+          setState(() {});
+        },
+        child: Icon(Icons.note_add),
+      ),
       appBar: AppBar(
         title: const Text("Note Urang"),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            NoteCard(),
-          ],
-        ),
+      body: ValueListenableBuilder(
+        valueListenable: Hive.box('notesBox').listenable(),
+        builder: (context, box, child) {
+          if (box.values.isEmpty) {
+            return Center(
+              child: Text("Eweuh Catatan"),
+            );
+          } else {
+            return ListView.separated(
+              separatorBuilder: (context, index) {
+                return SizedBox(
+                  height: 5,
+                );
+              },
+              itemCount: box.length,
+              itemBuilder: (context, index) {
+                Note currentNote = box.getAt(index);
+                return NoteCard(note: currentNote);
+              },
+            );
+          }
+        },
       ),
     );
   }
 }
 
 class NoteCard extends StatelessWidget {
-  const NoteCard({
-    super.key,
-  });
+  final Note note;
+  const NoteCard({super.key, required this.note});
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +69,12 @@ class NoteCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: ListTile(
-        title: Text("Judul aonnya"),
-        subtitle: Text("Deskripsi"),
-        trailing: Text("dijien ayeuna : 01-02-1778"),
+        title: Text(note.title),
+        subtitle: Text(note.desc),
+        trailing: Text(
+          'dijien ayeuna :\n${note.createdAt.formatDate()}',
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

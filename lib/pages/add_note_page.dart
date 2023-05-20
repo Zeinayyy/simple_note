@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:simple_note/db/database_services.dart';
+import 'package:simple_note/models/note.dart';
 
 class AddNotePage extends StatefulWidget {
   const AddNotePage({super.key});
@@ -30,7 +32,12 @@ class _AddNotePageState extends State<AddNotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
+        onPressed: () async {
+          Note note = Note(
+              title: _titleController.text,
+              desc: _descController.text,
+              createdAt: DateTime.now().toIso8601String());
+          await DatabaseService().addNote(note);
           GoRouter.of(context).pop();
         },
         label: Text("Simp"),
