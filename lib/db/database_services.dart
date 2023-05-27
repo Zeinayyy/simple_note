@@ -14,9 +14,9 @@ class DatabaseService {
     return box.values.toList().cast<Note>();
   }
 
-  Future<void> updateNote(Note note) async {
+  Future<void> updateNote(int key, Note note) async {
     final box = await Hive.openBox(boxName);
-    await box.put(note.key, note);
+    await box.put(key, note);
   }
 
   Future<void> deleteNote(Note note) async {

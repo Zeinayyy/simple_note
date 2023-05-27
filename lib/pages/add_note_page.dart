@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:simple_note/db/database_services.dart';
 import 'package:simple_note/models/note.dart';
+import 'package:sqflite/sqflite.dart';
 
 class AddNotePage extends StatefulWidget {
-  const AddNotePage({super.key});
+  const AddNotePage({super.key, this.note});
+  final Note? note;
 
   @override
   State<AddNotePage> createState() => _AddNotePageState();
 }
 
 class _AddNotePageState extends State<AddNotePage> {
+  final DatabaseService dbService = DatabaseService();
   late TextEditingController _titleController;
   late TextEditingController _descController;
 
@@ -18,6 +21,10 @@ class _AddNotePageState extends State<AddNotePage> {
   void initState() {
     _titleController = TextEditingController();
     _descController = TextEditingController();
+    if (widget.note != null) {
+      _titleController.text = widget.note!.title;
+      _descController.text = widget.note!.desc;
+    }
     super.initState();
   }
 
@@ -33,18 +40,27 @@ class _AddNotePageState extends State<AddNotePage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          Note note = Note(
+          Note tempNote = Note(
               title: _titleController.text,
               desc: _descController.text,
               createdAt: DateTime.now().toIso8601String());
-          await DatabaseService().addNote(note);
-          GoRouter.of(context).pop();
+          if (widget.note != null) {
+            await dbService.updateNote(widget.note!.key, tempNote);
+            //if (context.mounted) return;
+            GoRouter.of(context).pop();
+          } else {
+            await dbService.addNote(tempNote);
+            //if (context.mounted) return;
+            GoRouter.of(context).pop();
+          }
         },
         label: Text("Simp"),
         icon: const Icon(Icons.save),
       ),
       appBar: AppBar(
-        title: Text('Add Note'),
+        title: Text(
+          widget.note != null ? "Edit Note" : "Add note",
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
