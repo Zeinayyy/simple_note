@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:simple_note/db/database_services.dart';
 import 'package:simple_note/models/note.dart';
-import 'package:sqflite/sqflite.dart';
 
 class AddNotePage extends StatefulWidget {
   const AddNotePage({super.key, this.note});
